@@ -1,7 +1,9 @@
-import { Badge } from '@/components/ui/badge'
 import { db } from '@/db'
-import { createFileRoute } from '@tanstack/react-router'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
+import { PlusIcon } from 'lucide-react'
 
 
 
@@ -31,7 +33,30 @@ function App() {
           </Badge>
         )}
       </div>
+      <div className="flex gap-2">
+
+        <Button size="sm" asChild>
+          <Link to="/todos/new">
+            <PlusIcon /> Add Todo
+          </Link>
+        </Button>
+      </div>
     </div>
+    <TodoListTable todos={todos} />
+
   </div>
 
+}
+
+function TodoListTable({
+  todos,
+}: {
+  todos: Array<{
+    id: string
+    name: string
+    isComplete: boolean
+    createdAt: Date
+  }>
+}) {
+  return null
 }
