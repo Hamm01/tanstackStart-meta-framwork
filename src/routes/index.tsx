@@ -3,7 +3,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { PlusIcon } from 'lucide-react'
+import { ListTodoIcon, PlusIcon } from 'lucide-react'
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 
 
 
@@ -58,5 +59,22 @@ function TodoListTable({
     createdAt: Date
   }>
 }) {
-  return null
+  if (todos.length === 0) {
+    return <Empty className="border border-dashed">
+      <EmptyHeader >
+        <EmptyMedia variant="icon">
+          <ListTodoIcon />
+        </EmptyMedia>
+        <EmptyTitle>No todos</EmptyTitle>
+        <EmptyDescription>Try Adding new Todo</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button asChild>
+          <Link to="/todos/new">
+            <PlusIcon /> Add Todo
+          </Link>
+        </Button>
+      </EmptyContent>
+    </Empty>
+  }
 }
