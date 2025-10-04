@@ -120,10 +120,11 @@ function TodoTableRow({ id, name, isComplete, createdAt }: {
           <Link to="/todos/$id/edit" params={{ id }} >
             <EditIcon />
           </Link>
-          <Button variant="destructiveGhost" size="icon-sm" >
-            <Trash2Icon />
-          </Button>
         </Button>
+        <Button variant="destructiveGhost" size="icon-sm" >
+          <Trash2Icon />
+        </Button>
+
       </div>
     </TableCell>
   </TableRow>

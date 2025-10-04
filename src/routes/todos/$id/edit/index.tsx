@@ -12,7 +12,18 @@ export const Route = createFileRoute('/todos/$id/edit/')({
 function RouteComponent() {
     return (
         <div className="container space-y-2">
-
+            <Button asChild variant="ghost" size="sm" className="text-muted-foreground">
+                <Link to="/"><ArrowLeftIcon />Todo List</Link>
+            </Button>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Edit Todo</CardTitle>
+                    <CardDescription>Update the details of your todo item</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <TodoForm />
+                </CardContent>
+            </Card>
         </div>
     )
 }
