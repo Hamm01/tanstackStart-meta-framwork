@@ -5,6 +5,9 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { ListTodoIcon, PlusIcon } from 'lucide-react'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Checkbox } from '@/components/ui/checkbox'
+import { cn } from '@/lib/utils'
 
 
 
@@ -77,4 +80,53 @@ function TodoListTable({
       </EmptyContent>
     </Empty>
   }
+
+  return <Table>
+    <TableHeader>
+      <TableRow className='hover:bg-transparent'>
+        <TableHead className="w-[100px]">Sr no.</TableHead>
+        <TableHead>Task</TableHead>
+        <TableHead>Created on</TableHead>
+        <TableHead className='w-0'></TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {todos.map(todo => (
+        <TodoTableRow key={todo.id} {...todo} />
+      ))}
+    </TableBody>
+  </Table>
+}
+
+function TodoTableRow({ id, name, isComplete, createdAt }: {
+  id: string
+  name: string
+  isComplete: boolean
+  createdAt: Date
+}) {
+  return <TableRow>
+    <TableCell>
+      <Checkbox checked={isComplete} />
+    </TableCell>
+    <TableCell className={cn("font-medium", isComplete && "text-muted-foreground line-through")}>
+      {name}
+    </TableCell>
+    <TableCell className="text-sm text-muted-foreground">
+      {formatDate(createdAt)}
+    </TableCell>
+    <TableCell>
+      <div className='flex items-center justify-end gap-1'>
+        <Button>
+          <Link to="/todos/$id/edit" params={{ id }} >Edit</Link>
+        </Button>
+      </div>
+    </TableCell>
+  </TableRow>
+}
+
+function formatDate(date: Date) {
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    dateStyle: "short"
+  })
+  return formatter.format(date)
 }
