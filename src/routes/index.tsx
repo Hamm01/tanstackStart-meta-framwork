@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { ListTodoIcon, PlusIcon } from 'lucide-react'
+import { EditIcon, ListTodoIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -116,8 +116,13 @@ function TodoTableRow({ id, name, isComplete, createdAt }: {
     </TableCell>
     <TableCell>
       <div className='flex items-center justify-end gap-1'>
-        <Button>
-          <Link to="/todos/$id/edit" params={{ id }} >Edit</Link>
+        <Button variant="ghost" size="icon-sm" asChild>
+          <Link to="/todos/$id/edit" params={{ id }} >
+            <EditIcon />
+          </Link>
+          <Button variant="destructiveGhost" size="icon-sm" >
+            <Trash2Icon />
+          </Button>
         </Button>
       </div>
     </TableCell>
