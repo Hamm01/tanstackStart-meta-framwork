@@ -1,13 +1,17 @@
 import { db } from '@/db'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { createServerFn } from '@tanstack/react-start'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { createServerFn, useServerFn } from '@tanstack/react-start'
 import { EditIcon, ListTodoIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
+import { ActionButton } from '@/components/ui/action-button'
+import z from 'zod'
+import { todos } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 
 
 
@@ -98,12 +102,20 @@ function TodoListTable({
   </Table>
 }
 
+const deletefn = createServerFn({ method: 'POST' }).inputValidator(z.object({ id: z.string().min(1) })).handler(async ({ data }) => {
+  await db.delete(todos).where(eq(todos.id, data.id))
+
+  return { error: false }
+})
+
 function TodoTableRow({ id, name, isComplete, createdAt }: {
   id: string
   name: string
   isComplete: boolean
   createdAt: Date
 }) {
+  const deleteFnServer = useServerFn(deletefn)
+  const router = useRouter()
   return <TableRow>
     <TableCell>
       <Checkbox checked={isComplete} />
@@ -121,9 +133,14 @@ function TodoTableRow({ id, name, isComplete, createdAt }: {
             <EditIcon />
           </Link>
         </Button>
-        <Button variant="destructiveGhost" size="icon-sm" >
+        <ActionButton action={async () => {
+          const res = await deleteFnServer({ data: { id } })
+          router.invalidate()
+          return res
+        }} variant="destructiveGhost" size="icon-sm" >
           <Trash2Icon />
-        </Button>
+        </ActionButton>
+
 
       </div>
     </TableCell>
