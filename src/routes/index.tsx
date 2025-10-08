@@ -107,6 +107,10 @@ const deletefn = createServerFn({ method: 'POST' }).inputValidator(z.object({ id
 
   return { error: false }
 })
+const toggleFn = createServerFn({ method: 'POST' }).inputValidator(z.object({ id: z.string().min(1), isComplete: z.boolean() })).handler(async ({ data }) => {
+  await new Promise((res) => setTimeout(res, 1000))
+  await db.update(todos).set({ isComplete: data.isComplete }).where(eq(todos.id, data.id))
+})
 
 function TodoTableRow({ id, name, isComplete, createdAt }: {
   id: string
@@ -115,8 +119,14 @@ function TodoTableRow({ id, name, isComplete, createdAt }: {
   createdAt: Date
 }) {
   const deleteFnServer = useServerFn(deletefn)
+  const toggleFnServer = useServerFn(toggleFn)
   const router = useRouter()
-  return <TableRow>
+  return <TableRow onClick={async (e) => {
+    const target = e.target as HTMLElement
+    if (target.closest("[data-actions]")) return
+    await toggleFnServer({ data: { id, isComplete: !isComplete } })
+    router.invalidate()
+  }}>
     <TableCell>
       <Checkbox checked={isComplete} />
     </TableCell>
@@ -126,7 +136,7 @@ function TodoTableRow({ id, name, isComplete, createdAt }: {
     <TableCell className="text-sm text-muted-foreground">
       {formatDate(createdAt)}
     </TableCell>
-    <TableCell>
+    <TableCell data-actions>
       <div className='flex items-center justify-end gap-1'>
         <Button variant="ghost" size="icon-sm" asChild>
           <Link to="/todos/$id/edit" params={{ id }} >
