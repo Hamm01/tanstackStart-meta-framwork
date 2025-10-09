@@ -13,6 +13,7 @@ import z from 'zod'
 import { todos } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { startTransition, useState } from 'react'
+import { LocalCountButton } from '@/components/local-count-button'
 
 
 
@@ -43,7 +44,7 @@ function App() {
         )}
       </div>
       <div className="flex gap-2">
-
+        <LocalCountButton />
         <Button size="sm" asChild>
           <Link to="/todos/new">
             <PlusIcon /> Add Todo
