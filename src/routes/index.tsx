@@ -12,6 +12,7 @@ import { ActionButton } from '@/components/ui/action-button'
 import z from 'zod'
 import { todos } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { startTransition, useState } from 'react'
 
 
 
@@ -120,17 +121,22 @@ function TodoTableRow({ id, name, isComplete, createdAt }: {
 }) {
   const deleteFnServer = useServerFn(deletefn)
   const toggleFnServer = useServerFn(toggleFn)
+  const [isCurrentComplete, setIsCurrentComplete] = useState(isComplete)
   const router = useRouter()
-  return <TableRow onClick={async (e) => {
+  return <TableRow onClick={(e) => {
     const target = e.target as HTMLElement
     if (target.closest("[data-actions]")) return
-    await toggleFnServer({ data: { id, isComplete: !isComplete } })
-    router.invalidate()
+    setIsCurrentComplete(c => !c)
+    startTransition(async () => {
+      await toggleFnServer({ data: { id, isComplete: !isCurrentComplete } })
+      router.invalidate()
+    })
+
   }}>
     <TableCell>
-      <Checkbox checked={isComplete} />
+      <Checkbox checked={isCurrentComplete} />
     </TableCell>
-    <TableCell className={cn("font-medium", isComplete && "text-muted-foreground line-through")}>
+    <TableCell className={cn("font-medium", isCurrentComplete && "text-muted-foreground line-through")}>
       {name}
     </TableCell>
     <TableCell className="text-sm text-muted-foreground">
